@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": ["Alexia E. Smith"]
+	},
+	"searchlogger_description": "Logs all search terms for data analysis.",
+	"specialpages-group-search": "Search",
+	"searchlog": "Search Log",
+	"searchlog-desc": "Shows frequently used search terms to help wiki managers determine what content to make more visible.",
+	"action-search_log": "view search logs",
+	"no_log_entries_found": "No log entries found!",
+	"search_term": "Search Term",
+	"search_method": "Search Method",
+	"hits": "Hits",
+	"between_dates": "Between Dates:",
+	"dates_to": "to"
+}

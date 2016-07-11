@@ -1,0 +1,94 @@
+#searchlog {
+	width: 100%;
+	clear: both;
+}
+
+#searchlog, #searchlog th, #searchlog td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 4px;
+}
+
+	#searchlog th {
+		background: #ddd;
+	}
+
+	#searchlog .controls {
+		width: 108px;
+	}
+
+	#searchlog .controls a {
+		display: inline-block;
+	}
+
+	#searchlog .controls img {
+		padding: 0 4px;
+	}
+
+	#searchlog .master {
+		background: none repeat scroll 0 0 #8DDD62;
+	}
+
+	#searchlog .deleted {
+		background: none repeat scroll 0 0 pink;
+	}
+
+	#searchlog tr.uncached {
+		background-color: gold;
+	}
+
+#search_range {
+	float: right;
+	margin-top: 5px;
+}
+
+#date_search fieldset {
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+	line-height: 1em;
+}
+
+div.buttons {
+	float: right;
+	margin-bottom: 6px;
+}
+
+a.button {
+	-moz-border-bottom-colors: none;
+	-moz-border-image: none;
+	-moz-border-left-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-top-colors: none;
+	background: none repeat-x scroll center top #212121;
+	border-color: #212121;
+	border-radius: 3px 3px 3px 3px;
+	border-style: solid;
+	border-width: 1px 1px 0;
+	box-shadow: 0 1px 0 0 #5C5C5C inset, 0 2px 3px rgba(0, 0, 0, 0.2);
+	color: #FFFFFF;
+	cursor: pointer;
+	display: inline-block;
+	font: 300 12px/30px Helvetica,Arial,sans-serif;
+	height: 30px;
+	min-width: 125px;
+	padding: 0 10px;
+	text-align: center;
+	text-shadow: 0 -1px 0 #191919;
+	text-decoration: none;
+}
+
+fieldset#commit_fieldset {
+	border: 2px dashed black;
+	display: inline;
+	padding: 6px;
+	margin: 10px 0;
+}
+
+	fieldset .array_value {
+		display: block;
+	}
+
+	#commit_fieldset label {
+		font-weight: bold;
+	}
