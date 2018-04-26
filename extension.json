@@ -1,0 +1,63 @@
+{
+	"name": "Search Logger",
+	"version": "2.0",
+	"author": [
+		"Alexia E. Smith",
+		"Curse Inc&copy;"
+	],
+	"url": "https://github.com/HydraWiki/SearchLogger",
+	"descriptionmsg": "searchlogger_description",
+	"license-name": "GPL-3.0",
+	"type": "specialpage",
+	"AvailableRights": [
+		"search_log"
+	],
+	"GroupPermissions": {
+		"sysop": {
+			"search_log": true
+		}
+	},
+	"SpecialPages": {
+		"SearchLog": "SpecialSearchLog"
+	},
+	"MessagesDirs": {
+		"SearchLogger": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"SearchLoggerAliases": "SearchLogger.alias.php"
+	},
+	"AutoloadClasses": {
+		"SearchLoggerHooks": "SearchLogger.hooks.php",
+		"SpecialSearchLog": "specials/SpecialSearchLog.php",
+		"TemplateSearchLog": "templates/TemplateSearchLog.php"
+	},
+	"ResourceModules": {
+		"ext.searchLogger.styles": {
+			"styles": [
+				"css/searchlogger.css"
+			],
+			"dependencies": [
+				"ext.hydraCore.pagination.styles"
+			]
+		},
+		"ext.searchLogger.scripts": {
+			"scripts": [
+				"js/searchlogger.js"
+			],
+			"dependencies": [
+				"jquery.ui.datepicker"
+			]
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "SearchLogger"
+	},
+	"Hooks": {
+		"LoadExtensionSchemaUpdates": "SearchLoggerHooks::onLoadExtensionSchemaUpdates",
+		"SearchEngineReplacePrefixesComplete": "SearchLoggerHooks::onSearchEngineReplacePrefixesComplete"
+	},
+	"manifest_version": 1
+}

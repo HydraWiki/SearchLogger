@@ -12,5 +12,6 @@
 	"search_method": "Search Method",
 	"hits": "Hits",
 	"between_dates": "Between Dates:",
-	"dates_to": "to"
+	"dates_to": "to",
+	"list_filter": "Filter"
 }

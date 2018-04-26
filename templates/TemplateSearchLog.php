@@ -4,7 +4,7 @@
  * Search Logger
  * Search Log Skin
  *
- * @author		Alex Smith
+ * @author		Alexia E. Smith
  * @copyright	(c) 2014 Curse Inc.
  * @license		GPL v3.0
  * @package		Search Logger
@@ -14,13 +14,6 @@
 
 class TemplateSearchLog {
 	/**
-	 * Output HTML
-	 *
-	 * @var		string
-	 */
-	private $HMTL;
-
-	/**
 	 * Wiki List
 	 *
 	 * @access	public
@@ -28,11 +21,11 @@ class TemplateSearchLog {
 	 * @param	array	Pagination
 	 * @return	string	Built HTML
 	 */
-	public function searchLog($logs, $pagination) {
+	static public function searchLog($logs, $pagination) {
 		global $wgRequest;
 		$page = Title::newFromText('Special:SearchLog');
 		$url = $page->getFullURL();
-		$HTML = "
+		$html = "
 	{$pagination}
 	<div id='search_range'>
 		<form id='date_search' method='get' action='{$url}'>
@@ -41,7 +34,7 @@ class TemplateSearchLog {
 				<input id='start_date' name='start_date' type='text' value='".htmlentities($wgRequest->getVal('start_date'), ENT_QUOTES)."'/>
 				".wfMessage('dates_to')->escaped()."
 				<input id='end_date' name='end_date' type='text' value='".htmlentities($wgRequest->getVal('end_date'), ENT_QUOTES)."'/>
-				<input id='submit' type='submit' value='Filter'/>
+				<input id='submit' type='submit' class='mw-ui-button mw-ui-progressive' value='".wfMessage('list_filter')->escaped()."'/>
 			</fieldset>
 		</form>
 	</div>
@@ -57,7 +50,7 @@ class TemplateSearchLog {
 		";
 		if (count($logs)) {
 			foreach ($logs as $log) {
-$HTML .= "
+				$html .= "
 				<tr>
 					<td>{$log['search_term']}</td>
 					<td>{$log['search_method']}</td>
@@ -66,20 +59,17 @@ $HTML .= "
 ";
 			}
 		} else {
-			$HTML .= "
+			$html .= "
 			<tr>
 				<td colspan='3'>".wfMessage('no_log_entries_found')->escaped()."</td>
 			</tr>
 			";
 		}
-$HTML .= "
+		$html .= "
 		</tbody>
 	</table>
-";
+	{$pagination}";
 
-		$HTML .= $pagination;
-
-		return $HTML;
+		return $html;
 	}
 }
-?>

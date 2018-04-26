@@ -4,7 +4,7 @@
  * Search Logger
  * Search Log Special Page
  *
- * @author		Alex Smith
+ * @author		Alexia E. Smith
  * @copyright	(c) 2014 Curse Inc.
  * @license		GPL v3.0
  * @package		Search Logger
@@ -27,15 +27,9 @@ class SpecialSearchLog extends SpecialPage {
 	 * @return	void
 	 */
 	public function __construct() {
-		global $wgRequest, $wgUser;
+		parent::__construct('SearchLog', 'search_log');
 
-		parent::__construct('SearchLog');
-
-		$this->wgRequest	= $wgRequest;
-		$this->wgUser		= $wgUser;
-		$this->output		= $this->getOutput();
-
-		$this->DB = wfGetDB(DB_MASTER);
+		$this->output = $this->getOutput();
 	}
 
 	/**
@@ -46,15 +40,13 @@ class SpecialSearchLog extends SpecialPage {
 	 * @return	void	[Outputs to screen]
 	 */
 	public function execute($subpage) {
-		global $wgServer, $wgScriptPath;
-		if (!$this->wgUser->isAllowed('search_log')) {
+		if (!$this->getUser()->isAllowed('search_log')) {
 			throw new PermissionsError('search_log');
 			return;
 		}
 
-		$this->templateSearchLog = new TemplateSearchLog;
-
-		$this->output->addModules('ext.searchLogger');
+		$this->output->addModuleStyles(['ext.searchLogger.styles']);
+		$this->output->addModuleScripts(['ext.searchLogger.scripts']);
 
 		$this->setHeaders();
 
@@ -70,34 +62,34 @@ class SpecialSearchLog extends SpecialPage {
 	 * @return	void	[Outputs to screen]
 	 */
 	public function searchLog() {
-		$start = $this->wgRequest->getInt('st');
+		$start = $this->getRequest()->getInt('st');
 		$itemsPerPage = 50;
 
-		$start_date = trim($this->wgRequest->getText('start_date'));
-		if ($start_date) {
-			$start_timestamp = strtotime($start_date);
-			if ($start_timestamp) {
-				$where[] = "timestamp > ".$start_timestamp;
+		$where = [];
+
+		$startDate = trim($this->getRequest()->getText('start_date'));
+		if ($startDate) {
+			$startTimestamp = strtotime($startDate);
+			if ($startTimestamp) {
+				$where[] = "timestamp > ".$startTimestamp;
 			}
 		}
-		$end_date = trim($this->wgRequest->getText('end_date'));
-		if ($end_date) {
-			$end_timestamp = strtotime($end_date);
-			if ($end_timestamp) {
-				$end_timestamp += 86399;
-				$where[] = "timestamp < ".$end_timestamp;
+		$endDate = trim($this->getRequest()->getText('end_date'));
+		if ($endDate) {
+			$endTimestamp = strtotime($endDate);
+			if ($endTimestamp) {
+				$endTimestamp += 86399;
+				$where[] = "timestamp < ".$endTimestamp;
 			}
 		}
 
-		if (count($where)) {
-			$where = implode(' AND ', $where);
-		} else {
-			$where = null;
-		}
-
-		$result = $this->DB->select(
-			'search_log',
-			['*, count(search_term) as hits'],
+		$db = wfGetDB(DB_MASTER);
+		$result = $db->select(
+			['search_log'],
+			[
+				'*',
+				'count(search_term) as hits'
+			],
 			$where,
 			__METHOD__,
 			[
@@ -112,8 +104,8 @@ class SpecialSearchLog extends SpecialPage {
 			$logs[$row['sid']] = $row;
 		}
 
-		$result = $this->DB->select(
-			'search_log',
+		$result = $db->select(
+			['search_log'],
 			['count(*) AS total'],
 			$where,
 			__METHOD__,
@@ -123,10 +115,10 @@ class SpecialSearchLog extends SpecialPage {
 		);
 		$total = $result->numRows();
 
-		$pagination = Curse::generatePaginationHtml($total, $itemsPerPage, $start);
+		$pagination = HydraCore::generatePaginationHtml(self::getTitleFor($this->getName()), $total, $itemsPerPage, $start);
 
 		$this->output->setPageTitle(wfMessage('searchlog')->escaped());
-		$this->content = $this->templateSearchLog->searchLog($logs, $pagination);
+		$this->content = TemplateSearchLog::searchLog($logs, $pagination);
 	}
 
 	/**
@@ -136,7 +128,7 @@ class SpecialSearchLog extends SpecialPage {
 	 * @return	boolean
 	 */
 	public function isListed() {
-		if ($this->wgUser->isAllowed('search_log')) {
+		if ($this->getUser()->isAllowed('search_log')) {
 			return true;
 		}
 		return false;
@@ -151,5 +143,14 @@ class SpecialSearchLog extends SpecialPage {
 	public function isRestricted() {
 		return true;
 	}
+
+	/**
+	 * Under which header this special page is listed in Special:SpecialPages.
+	 *
+	 * @access	protected
+	 * @return	string	Group Name
+	 */
+	protected function getGroupName() {
+		return 'search';
+	}
 }
-?>
