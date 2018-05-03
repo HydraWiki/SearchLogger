@@ -14,7 +14,7 @@
 
 class TemplateSearchLog {
 	/**
-	 * Wiki List
+	 * Search Log Page
 	 *
 	 * @access	public
 	 * @param	array	Array of log Information

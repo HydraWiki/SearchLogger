@@ -20,39 +20,35 @@ class SearchLoggerHooks {
 	 * @param	object	[Optional] DatabaseUpdater Object
 	 * @return	boolean	true
 	 */
-	static function onLoadExtensionSchemaUpdates($updater = null) {
+	static public function onLoadExtensionSchemaUpdates($updater = null) {
 		$extDir = __DIR__;
 
 		$updater->addExtensionUpdate(['addTable', 'search_log', "{$extDir}/install/sql/searchlogger_table_search_log.sql", true]);
+
+		$updater->addExtensionUpdate(['modifyField', 'search_log', 'sid', "{$extDir}/upgrade/sql/search_log/modify_sid_auto_increment.sql", true]);
 
 		return true;
 	}
 
 	/**
-	 * Catching searches for logging, does not modify the search.
+	 * Catching searches for logging.
 	 *
 	 * @access	public
-	 * @param	object	SearchEngine Object
-	 * @param	string	Search Term - Might have been modify by another extension's hook into SearchEngine::transformSearchTerm();
-	 * @param	string	Parsed over search term
-	 * @return	boolean	true
+	 * @param	object	SpecialSearch
+	 * @param	object	OutputPage
+	 * @param	string	Transformed Search Term
+	 * @return	boolean	True
 	 */
-	static function onSearchEngineReplacePrefixesComplete($searchEngine, $query, &$parsed) {
+	static public function onSpecialSearchResultsPrepend($searchPage, $output, $query) {
 		$db = wfGetDB(DB_MASTER);
 
-		//Remove when PHP finally becauses 100% multibyte by default.
-		if (function_exists('mb_strtolower')) {
-			$searchTerm = mb_strtolower($query, 'UTF-8');
-		} else {
-			$searchTerm = strtolower($query);
-		}
-		$searchTerm = trim($searchTerm);
+		$searchTerm = trim(mb_strtolower($query, 'UTF-8'));
 
-		if (!empty($_REQUEST['go'])) {
+		if (!empty($searchPage->getRequest()->getVal('go'))) {
 			$searchMethod = 'go';
-		} elseif (!empty($_REQUEST['fulltext'])) {
+		} elseif (!empty($searchPage->getRequest()->getVal('fulltext'))) {
 			$searchMethod = 'fulltext';
-		} elseif ($_REQUEST['suggest']) {
+		} elseif (!empty($searchPage->getRequest()->getVal('suggest'))) {
 			$searchMethod = 'ajax';
 		} else {
 			$searchMethod = 'other';
@@ -60,9 +56,51 @@ class SearchLoggerHooks {
 
 		$db->insert(
 			'search_log',
-			['search_term' => $searchTerm, 'search_method' => $searchMethod, 'timestamp' => time()],
+			[
+				'search_term' => $searchTerm,
+				'search_method' => $searchMethod,
+				'timestamp' => time()
+			],
 			__METHOD__
 		);
 		return true;
+	}
+
+	/**
+	 * Return the top searchs by rank for the given time period.
+	 *
+	 * @access	public
+	 * @param	integer	[Optional] Start Timestamp, Unix Style
+	 * @param	integer	[Optional] End Timestamp, Unix Style
+	 * @return	array	Top search terms by rank in descending order.  [[rank, term], [rank, term]]
+	 */
+	static public function getTopSearchTerms($startTimestamp = null, $endTimestamp = null) {
+		if ($startTimestamp === null) {
+			$startTimestamp = 0;
+		}
+		if ($endTimestamp === null) {
+			$endTimestamp = time();
+		}
+
+		$db = wfGetDB(DB_SLAVE);
+		$result = $db->select(
+			['search_log'],
+			['count(*) as total', 'search_term'],
+			[
+				"timestamp > ".$db->strencode($startTimestamp),
+				"timestamp < ".$db->strencode($endTimestamp)
+			],
+			__METHOD__,
+			[
+				'GROUP BY'	=> 'search_term',
+				'ORDER BY'	=> 'total DESC'
+			]
+		);
+
+		$terms = [];
+		while ($row = $result->fetchRow()) {
+			$terms[] = [$row['total'], $row['search_term']];
+		}
+		return $terms;
 	}
 }

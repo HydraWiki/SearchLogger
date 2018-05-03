@@ -6,3 +6,5 @@ CREATE TABLE /*_*/search_log (
 ) /*$wgDBTableOptions*/;
 
 ALTER TABLE /*_*/search_log ADD PRIMARY KEY (`sid`), ADD KEY `search_term` (`search_term`,`search_method`,`timestamp`);
+
+ALTER TABLE /*_*/search_log MODIFY `sid` int(12) NOT NULL AUTO_INCREMENT;

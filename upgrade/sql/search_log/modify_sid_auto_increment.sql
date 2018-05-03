@@ -1,0 +1,1 @@
+ALTER TABLE /*_*/search_log MODIFY `sid` int(12) NOT NULL AUTO_INCREMENT;
