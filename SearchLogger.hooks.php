@@ -74,12 +74,21 @@ class SearchLoggerHooks {
 	 * @param	integer	[Optional] End Timestamp, Unix Style
 	 * @return	array	Top search terms by rank in descending order.  [[rank, term], [rank, term]]
 	 */
-	static public function getTopSearchTerms($startTimestamp = null, $endTimestamp = null) {
+	static public function getTopSearchTerms($startTimestamp = null, $endTimestamp = null, $limit = null) {
 		if ($startTimestamp === null) {
 			$startTimestamp = 0;
 		}
 		if ($endTimestamp === null) {
 			$endTimestamp = time();
+		}
+
+		$options = [
+			'GROUP BY'	=> 'search_term',
+			'ORDER BY'	=> 'total DESC'
+		];
+
+		if ($limit !== null) {
+			$options['LIMIT'] = intval($limit);
 		}
 
 		$db = wfGetDB(DB_SLAVE);
@@ -91,10 +100,7 @@ class SearchLoggerHooks {
 				"timestamp < ".$db->strencode($endTimestamp)
 			],
 			__METHOD__,
-			[
-				'GROUP BY'	=> 'search_term',
-				'ORDER BY'	=> 'total DESC'
-			]
+			$options
 		);
 
 		$terms = [];
