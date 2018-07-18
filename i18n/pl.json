@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": ["Alexia E. Smith"]
+	},
+	"searchlogger_description": "Rejestruje wszystkie wyszukiwane frazy w celach analitycznych.",
+	"specialpages-group-search": "Szukaj",
+	"searchlog": "Rejestr wyszukiwania",
+	"searchlog-desc": "Wyświetla najczęściej używane frazy wyszukiwana, aby pomóc menadżerom wiki określić treść, którą należy uczynić bardziej widoczną.",
+	"action-search_log": "zobacz rejestry wyszukiwania",
+	"no_log_entries_found": "Nie odnaleziono wpisów w rejestrze!",
+	"search_term": "Wyszukaj frazę",
+	"search_method": "Metoda wyszukiwania",
+	"hits": "Trafienia",
+	"between_dates": "W czasie:",
+	"dates_to": "do",
+	"list_filter": "Filtr"
+}
